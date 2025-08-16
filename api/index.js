@@ -1,5 +1,5 @@
 // Very simple Vercel serverless function
-module.exports = (req, res) => {
+export default function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -92,4 +92,4 @@ module.exports = (req, res) => {
     </body>
     </html>
   `);
-};
+}
