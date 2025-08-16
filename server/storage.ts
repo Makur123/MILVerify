@@ -140,6 +140,7 @@ export class MemStorage implements IStorage {
     const user: User = {
       ...insertUser,
       id,
+      name: insertUser.name ?? null,
       learningProgress: {},
       createdAt: new Date()
     };
@@ -161,6 +162,11 @@ export class MemStorage implements IStorage {
     const analysis: Analysis = {
       ...insertAnalysis,
       id,
+      userId: insertAnalysis.userId ?? null,
+      contentText: insertAnalysis.contentText ?? null,
+      fileName: insertAnalysis.fileName ?? null,
+      fileType: insertAnalysis.fileType ?? null,
+      fileSize: insertAnalysis.fileSize ?? null,
       createdAt: new Date()
     };
     this.analyses.set(id, analysis);
@@ -188,7 +194,8 @@ export class MemStorage implements IStorage {
     const id = randomUUID();
     const module: LearningModule = {
       ...insertModule,
-      id
+      id,
+      isActive: insertModule.isActive ?? null
     };
     this.learningModules.set(id, module);
     return module;

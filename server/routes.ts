@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import multer from "multer";
 import OpenAI from "openai";
+import "./types"; // Import type extensions
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -90,6 +91,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/analyze/text", authenticateToken, async (req, res) => {
     try {
       const { text } = req.body;
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
       const userId = req.user.userId;
 
       if (!text || text.trim().length === 0) {
@@ -166,6 +170,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/analyze/image", authenticateToken, upload.single('image'), async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
       const userId = req.user.userId;
       const file = req.file;
 
@@ -247,6 +254,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/analyze/audio", authenticateToken, upload.single('audio'), async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
       const userId = req.user.userId;
       const file = req.file;
 
@@ -302,6 +312,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User data routes
   app.get("/api/user/analyses", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
       const userId = req.user.userId;
       const analyses = await storage.getAnalysesByUser(userId, 50);
       res.json(analyses);
@@ -312,6 +325,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/user/dashboard", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
       const userId = req.user.userId;
       const analyses = await storage.getAnalysesByUser(userId);
       const progress = await storage.getUserProgress(userId);
@@ -344,6 +360,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/learning/progress", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
       const userId = req.user.userId;
       const progress = await storage.getUserProgress(userId);
       res.json(progress);
@@ -354,6 +373,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/learning/progress", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
       const userId = req.user.userId;
       const { moduleId, progress, completed } = req.body;
 

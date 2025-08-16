@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Search, AlertTriangle, GraduationCap, Trophy, TrendingUp, FileText, Award, Target } from 'lucide-react';
+import { BarChart3, Search, AlertTriangle, GraduationCap, Trophy, TrendingUp, FileText, Award, Target, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
