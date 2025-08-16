@@ -86,4 +86,54 @@
   .tab-inactive {
     @apply text-gray-600 hover:text-gray-900 hover:bg-white transition-colors;
   }
+
+  /* Mobile-first responsive utilities */
+  .mobile-stack {
+    @apply flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4;
+  }
+  
+  .mobile-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  .mobile-hide {
+    @apply hidden sm:block;
+  }
+  
+  .mobile-show {
+    @apply block sm:hidden;
+  }
+  
+  .mobile-full {
+    @apply w-full sm:w-auto;
+  }
+  
+  .touch-friendly {
+    @apply min-h-[44px] min-w-[44px] p-3;
+  }
+  
+  /* Responsive text sizing */
+  .responsive-text-xs {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .responsive-text-sm {
+    @apply text-sm sm:text-base;
+  }
+  
+  .responsive-text-base {
+    @apply text-base sm:text-lg;
+  }
+  
+  .responsive-text-lg {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .responsive-text-xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  .responsive-text-2xl {
+    @apply text-2xl sm:text-3xl;
+  }
 }

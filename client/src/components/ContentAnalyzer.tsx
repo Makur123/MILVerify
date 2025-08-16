@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { FileUpload } from './FileUpload';
 import { uploadFile, apiCall } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 import type { User } from '@/lib/auth';
 
 interface ContentAnalyzerProps {
@@ -20,6 +21,7 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentResults, setCurrentResults] = useState<any>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleTextAnalysis = async () => {
     if (!user) {
@@ -159,13 +161,13 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-8">
+    <div className={`${isMobile ? 'space-y-6' : 'grid lg:grid-cols-2 gap-8'}`}>
       {/* Upload Section */}
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Upload className="text-primary mr-2 h-5 w-5" />
+            <CardTitle className="flex items-center text-sm sm:text-base">
+              <Upload className="text-primary mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Upload Content for Analysis
             </CardTitle>
           </CardHeader>
@@ -186,8 +188,8 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
         {/* Text Analysis */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Search className="text-primary mr-2 h-5 w-5" />
+            <CardTitle className="flex items-center text-sm sm:text-base">
+              <Search className="text-primary mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Text Analysis
             </CardTitle>
           </CardHeader>
@@ -196,16 +198,17 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
               value={analysisText}
               onChange={(e) => setAnalysisText(e.target.value)}
               placeholder="Paste or type text content to analyze for AI generation..."
-              className="h-32 resize-none"
+              className={`${isMobile ? 'h-24' : 'h-32'} resize-none`}
               maxLength={5000}
             />
-            <div className="mt-4 flex justify-between items-center">
+            <div className={`mt-4 flex ${isMobile ? 'flex-col space-y-2' : 'justify-between items-center'}`}>
               <span className="text-sm text-muted-foreground">
                 {analysisText.length}/5000 characters
               </span>
               <Button
                 onClick={handleTextAnalysis}
                 disabled={isAnalyzing || !analysisText.trim()}
+                className={isMobile ? 'w-full' : ''}
               >
                 <Search className="mr-2 h-4 w-4" />
                 {isAnalyzing ? 'Analyzing...' : 'Analyze Text'}
@@ -219,8 +222,8 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Brain className="text-primary mr-2 h-5 w-5" />
+            <CardTitle className="flex items-center text-sm sm:text-base">
+              <Brain className="text-primary mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Analysis Results
             </CardTitle>
           </CardHeader>
@@ -268,14 +271,14 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
                   <h4 className="font-medium text-gray-900">Detection Service Results:</h4>
                   
                   {currentResults.openai && (
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className={`flex items-center ${isMobile ? 'flex-col space-y-2' : 'justify-between'} p-3 bg-gray-50 rounded-lg`}>
                       <div className="flex items-center">
                         <Brain className="text-primary mr-2 h-4 w-4" />
                         <span className="text-sm font-medium">OpenAI</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className={`flex items-center space-x-2 ${isMobile ? 'w-full' : ''}`}>
                         <span className="text-sm">{Math.round(currentResults.openai.confidence * 100)}% AI</span>
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                        <div className={`${isMobile ? 'flex-1' : 'w-16'} bg-gray-200 rounded-full h-2`}>
                           <div 
                             className="bg-orange-500 h-2 rounded-full" 
                             style={{ width: `${currentResults.openai.confidence * 100}%` }}
@@ -286,14 +289,14 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
                   )}
 
                   {currentResults.gptZero && (
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className={`flex items-center ${isMobile ? 'flex-col space-y-2' : 'justify-between'} p-3 bg-gray-50 rounded-lg`}>
                       <div className="flex items-center">
                         <Search className="text-primary mr-2 h-4 w-4" />
                         <span className="text-sm font-medium">GPTZero</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className={`flex items-center space-x-2 ${isMobile ? 'w-full' : ''}`}>
                         <span className="text-sm">{Math.round(currentResults.gptZero.confidence * 100)}% AI</span>
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                        <div className={`${isMobile ? 'flex-1' : 'w-16'} bg-gray-200 rounded-full h-2`}>
                           <div 
                             className="bg-orange-500 h-2 rounded-full" 
                             style={{ width: `${currentResults.gptZero.confidence * 100}%` }}
@@ -304,14 +307,14 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
                   )}
 
                   {currentResults.aiOrNot && (
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className={`flex items-center ${isMobile ? 'flex-col space-y-2' : 'justify-between'} p-3 bg-gray-50 rounded-lg`}>
                       <div className="flex items-center">
                         <CheckCircle className="text-primary mr-2 h-4 w-4" />
                         <span className="text-sm font-medium">AI or Not</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className={`flex items-center space-x-2 ${isMobile ? 'w-full' : ''}`}>
                         <span className="text-sm">{Math.round(currentResults.aiOrNot.confidence * 100)}% AI</span>
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                        <div className={`${isMobile ? 'flex-1' : 'w-16'} bg-gray-200 rounded-full h-2`}>
                           <div 
                             className="bg-orange-500 h-2 rounded-full" 
                             style={{ width: `${currentResults.aiOrNot.confidence * 100}%` }}
@@ -348,8 +351,8 @@ export function ContentAnalyzer({ user, onAnalysisComplete, onAuthRequired }: Co
         {/* Quick MIL Tips */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Lightbulb className="text-secondary mr-2 h-5 w-5" />
+            <CardTitle className="flex items-center text-sm sm:text-base">
+              <Lightbulb className="text-secondary mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Media Literacy Tip
             </CardTitle>
           </CardHeader>
