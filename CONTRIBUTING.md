@@ -1,1 +1,1 @@
-
+Create React-Native snippets, Tailwind CSS IntelliSense - **Browser Extensions**: React Developer Tools, Lighthouse - **Design Tools**: Figma (for mockups), Chrome DevTools (for responsive testing)  ---  ## Questions?  If you have questions about contributing, feel free to: - **Open an issue** with the `question` label - **Start a discussion** in GitHub Discussions - **Check existing issues** for similar questions  Thank you for contributing to MIL Guard! 🛡️
