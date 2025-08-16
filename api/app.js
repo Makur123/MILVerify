@@ -46,6 +46,62 @@ export default function handler(req, res) {
       <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
       <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
       <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        
+        .gradient-bg {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .glassmorphism {
+          background: rgba(255, 255, 255, 0.25);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .btn-modern {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .btn-modern:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .pulse-ring {
+          animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        
+        @keyframes pulse-ring {
+          0% { transform: scale(0.33); }
+          40%, 50% { opacity: 1; }
+          100% { opacity: 0; transform: scale(1.03); }
+        }
+      </style>
     </head>
     <body class="bg-gray-50">
       <div id="root"></div>
