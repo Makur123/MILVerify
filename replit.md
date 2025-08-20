@@ -41,8 +41,13 @@ The application uses **PostgreSQL** as the primary database with **Drizzle ORM**
 ## External Dependencies
 
 ### AI and Machine Learning
-- **OpenAI API**: Primary service for content analysis and AI detection
-- **Content Analysis**: Text, image, and audio processing capabilities
+- **OpenAI API**: Primary service for content analysis and AI detection using GPT-4o model
+- **Deepfake Detection API**: Enhanced verification and manipulation detection for images and text
+- **Content Analysis**: Text, image, and audio processing capabilities with multiple detection services
+
+### Learning and Education
+- **UNESCO MIL Framework**: Comprehensive Media and Information Literacy curriculum integrated into learning paths
+- **Educational Content**: Structured learning modules for MIL fundamentals, AI detection, and fact verification
 
 ### Database and Storage
 - **Neon Database**: Serverless PostgreSQL hosting

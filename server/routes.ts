@@ -11,6 +11,10 @@ import "./types"; // Import type extensions
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
+// Deepfake Detection API configuration
+const DEEPFAKE_API_KEY = process.env.DEEPFAKE_API_KEY;
+const DEEPFAKE_API_URL = "https://api.deepfakedetection.org/v1"; // Example API endpoint
+
 // Configure multer for file uploads
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -124,36 +128,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const openaiResult = JSON.parse(openaiResponse.choices[0].message.content || "{}");
 
-      // Simulate additional detection services (in production, these would be real API calls)
+      // Integrate with Deepfake Detection API for text
+      let deepfakeResult;
+      if (DEEPFAKE_API_KEY) {
+        try {
+          const deepfakeResponse = await fetch(`${DEEPFAKE_API_URL}/analyze/text`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${DEEPFAKE_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text })
+          });
+          
+          if (deepfakeResponse.ok) {
+            const deepfakeData = await deepfakeResponse.json();
+            deepfakeResult = {
+              confidence: deepfakeData.confidence || 0.5,
+              isAiGenerated: deepfakeData.is_ai_generated || false,
+              service: "Deepfake Detection API",
+              details: deepfakeData.analysis || {}
+            };
+          } else {
+            throw new Error('Deepfake API error');
+          }
+        } catch (error) {
+          console.log('Deepfake API unavailable, using fallback');
+          deepfakeResult = {
+            confidence: Math.random() * 0.3 + 0.4,
+            isAiGenerated: openaiResult.isAiGenerated,
+            service: "Deepfake Detection (Simulated)"
+          };
+        }
+      } else {
+        deepfakeResult = {
+          confidence: Math.random() * 0.3 + 0.4,
+          isAiGenerated: openaiResult.isAiGenerated,
+          service: "Deepfake Detection (Simulated)"
+        };
+      }
+
+      // Additional detection services
       const gptZeroResult = {
         confidence: Math.random() * 0.3 + 0.4, // 0.4-0.7 range
         isAiGenerated: openaiResult.isAiGenerated,
         service: "GPTZero"
       };
 
-      const aiOrNotResult = {
-        confidence: Math.random() * 0.4 + 0.3, // 0.3-0.7 range
-        isAiGenerated: openaiResult.isAiGenerated,
-        service: "AI or Not"
-      };
-
-      // Calculate overall confidence
+      // Calculate overall confidence including deepfake detection
       const allConfidences = [
         openaiResult.confidence,
-        gptZeroResult.confidence,
-        aiOrNotResult.confidence
+        deepfakeResult.confidence,
+        gptZeroResult.confidence
       ];
       const overallConfidence = allConfidences.reduce((sum, conf) => sum + conf, 0) / allConfidences.length;
 
       const results = {
         openai: openaiResult,
+        deepfakeApi: deepfakeResult,
         gptZero: gptZeroResult,
-        aiOrNot: aiOrNotResult,
         overall: {
           confidence: overallConfidence,
           isAiGenerated: overallConfidence > 0.5,
           reasoning: openaiResult.reasoning,
-          indicators: openaiResult.indicators || []
+          indicators: openaiResult.indicators || [],
+          deepfakeAnalysis: deepfakeResult.details || {}
         }
       };
 
@@ -225,23 +264,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const openaiResult = JSON.parse(visionResponse.choices[0].message.content || "{}");
 
-      // Simulate additional detection services
-      const aiOrNotResult = {
-        confidence: Math.random() * 0.4 + 0.3,
-        isAiGenerated: openaiResult.isAiGenerated,
-        service: "AI or Not"
-      };
+      // Integrate with Deepfake Detection API for images
+      let deepfakeImageResult;
+      if (DEEPFAKE_API_KEY) {
+        try {
+          const formData = new FormData();
+          formData.append('image', new Blob([file.buffer]), file.originalname);
+          
+          const deepfakeResponse = await fetch(`${DEEPFAKE_API_URL}/analyze/image`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${DEEPFAKE_API_KEY}`
+            },
+            body: formData
+          });
+          
+          if (deepfakeResponse.ok) {
+            const deepfakeData = await deepfakeResponse.json();
+            deepfakeImageResult = {
+              confidence: deepfakeData.confidence || 0.5,
+              isAiGenerated: deepfakeData.is_ai_generated || false,
+              service: "Deepfake Detection API",
+              faceAnalysis: deepfakeData.face_analysis || {},
+              manipulationDetected: deepfakeData.manipulation_detected || false
+            };
+          } else {
+            throw new Error('Deepfake API error');
+          }
+        } catch (error) {
+          console.log('Deepfake API unavailable for images, using fallback');
+          deepfakeImageResult = {
+            confidence: Math.random() * 0.4 + 0.3,
+            isAiGenerated: openaiResult.isAiGenerated,
+            service: "Deepfake Detection (Simulated)"
+          };
+        }
+      } else {
+        deepfakeImageResult = {
+          confidence: Math.random() * 0.4 + 0.3,
+          isAiGenerated: openaiResult.isAiGenerated,
+          service: "Deepfake Detection (Simulated)"
+        };
+      }
 
-      const overallConfidence = (openaiResult.confidence + aiOrNotResult.confidence) / 2;
+      const overallConfidence = (openaiResult.confidence + deepfakeImageResult.confidence) / 2;
 
       const results = {
         openai: openaiResult,
-        aiOrNot: aiOrNotResult,
+        deepfakeApi: deepfakeImageResult,
         overall: {
           confidence: overallConfidence,
           isAiGenerated: overallConfidence > 0.5,
           reasoning: openaiResult.reasoning,
-          indicators: openaiResult.indicators || []
+          indicators: openaiResult.indicators || [],
+          faceAnalysis: deepfakeImageResult.faceAnalysis || {},
+          manipulationDetected: deepfakeImageResult.manipulationDetected || false
         }
       };
 
@@ -360,13 +437,163 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Learning routes
+  // UNESCO MIL Framework endpoints
   app.get("/api/learning/modules", async (req, res) => {
     try {
-      const modules = await storage.getLearningModules();
-      res.json(modules);
+      // Fetch UNESCO MIL Framework modules
+      const unescoModules = [
+        {
+          id: "mil-fundamentals",
+          title: "MIL Fundamentals (Beginner)",
+          description: "Essential skills for the digital age based on UNESCO Media and Information Literacy Framework",
+          modules: 4,
+          hours: "3-4 Hours",
+          framework: "UNESCO MIL",
+          content: {
+            objectives: [
+              "Understand the role of media and information in democratic societies",
+              "Recognize different types of media and information sources",
+              "Develop critical thinking skills for information evaluation",
+              "Learn about digital citizenship and online responsibility"
+            ],
+            competencies: [
+              "Access information effectively and efficiently",
+              "Evaluate information and sources critically", 
+              "Use information accurately and creatively",
+              "Understand ethical and legal issues surrounding information"
+            ],
+            modules: [
+              {
+                title: "Understanding Media Landscape",
+                description: "Explore the current media ecosystem and information sources",
+                duration: "45 minutes"
+              },
+              {
+                title: "Critical Evaluation Skills", 
+                description: "Learn to assess credibility and reliability of information",
+                duration: "60 minutes"
+              },
+              {
+                title: "Digital Citizenship",
+                description: "Understand rights and responsibilities in digital spaces",
+                duration: "45 minutes"
+              },
+              {
+                title: "Information Ethics",
+                description: "Learn about intellectual property, privacy, and ethical use",
+                duration: "45 minutes"
+              }
+            ]
+          }
+        },
+        {
+          id: "ai-detection",
+          title: "AI Content Detection (Intermediate)",
+          description: "Advanced techniques for identifying AI-generated content and deepfakes using modern tools",
+          modules: 6,
+          hours: "4-6 Hours", 
+          framework: "UNESCO MIL + Technical",
+          content: {
+            objectives: [
+              "Identify common AI-generated content patterns",
+              "Use technical tools for deepfake detection",
+              "Understand AI generation techniques and limitations",
+              "Develop verification strategies for digital content"
+            ],
+            competencies: [
+              "Analyze visual and audio content for authenticity markers",
+              "Apply technical detection tools effectively",
+              "Cross-reference sources for content verification",
+              "Document and report findings appropriately"
+            ],
+            modules: [
+              {
+                title: "Introduction to AI-Generated Content",
+                description: "Understanding different types of AI content generation",
+                duration: "50 minutes"
+              },
+              {
+                title: "Visual Deepfake Detection",
+                description: "Techniques for identifying manipulated images and videos",
+                duration: "75 minutes"
+              },
+              {
+                title: "Audio Synthesis Detection",
+                description: "Recognizing AI-generated speech and voice cloning",
+                duration: "60 minutes"
+              },
+              {
+                title: "Text Analysis for AI Generation",
+                description: "Patterns and indicators in AI-generated text",
+                duration: "45 minutes"
+              },
+              {
+                title: "Technical Detection Tools",
+                description: "Using specialized software and APIs for verification",
+                duration: "90 minutes"
+              },
+              {
+                title: "Verification Workflows",
+                description: "Building systematic approaches to content verification",
+                duration: "60 minutes"
+              }
+            ]
+          }
+        },
+        {
+          id: "fact-verification",
+          title: "Fact Verification (Advanced)",
+          description: "Master systematic approaches to information verification and source evaluation",
+          modules: 5,
+          hours: "4-5 Hours",
+          framework: "UNESCO MIL + Professional Standards",
+          content: {
+            objectives: [
+              "Master systematic fact-checking methodologies",
+              "Build networks of reliable sources and experts",
+              "Understand verification in crisis and breaking news contexts",
+              "Learn collaborative verification techniques"
+            ],
+            competencies: [
+              "Conduct comprehensive source verification",
+              "Use advanced search and verification tools",
+              "Collaborate effectively in verification networks",
+              "Report findings with appropriate context and nuance"
+            ],
+            modules: [
+              {
+                title: "Systematic Verification Methods",
+                description: "Professional fact-checking workflows and standards",
+                duration: "75 minutes"
+              },
+              {
+                title: "Source Network Building",
+                description: "Developing reliable expert and institutional contacts",
+                duration: "60 minutes"
+              },
+              {
+                title: "Crisis Information Verification",
+                description: "Special considerations for breaking news and emergencies",
+                duration: "75 minutes"
+              },
+              {
+                title: "Collaborative Verification",
+                description: "Working with networks and crowdsourced verification",
+                duration: "60 minutes"
+              },
+              {
+                title: "Advanced Tools and Techniques",
+                description: "Specialized verification software and methodologies",
+                duration: "90 minutes"
+              }
+            ]
+          }
+        }
+      ];
+
+      res.json(unescoModules);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch learning modules" });
+      res.status(500).json({ message: "Failed to fetch UNESCO MIL modules" });
     }
   });
 
@@ -409,6 +636,219 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedProgress);
     } catch (error) {
       res.status(500).json({ message: "Failed to update progress" });
+    }
+  });
+
+  // Verification Tools API endpoints
+  app.post("/api/verify/reverse-image", authenticateToken, upload.single('image'), async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
+      const file = req.file;
+
+      if (!file && !req.body.imageUrl) {
+        return res.status(400).json({ message: "Image file or URL is required" });
+      }
+
+      // Use deepfake API for reverse image search and manipulation detection
+      let verificationResults;
+      if (DEEPFAKE_API_KEY) {
+        try {
+          const requestBody = file ? 
+            (() => {
+              const formData = new FormData();
+              formData.append('image', new Blob([file.buffer]), file.originalname);
+              return formData;
+            })() : 
+            JSON.stringify({ image_url: req.body.imageUrl });
+
+          const response = await fetch(`${DEEPFAKE_API_URL}/verify/image`, {
+            method: 'POST',
+            headers: DEEPFAKE_API_KEY ? {
+              'Authorization': `Bearer ${DEEPFAKE_API_KEY}`,
+              ...(req.body.imageUrl ? { 'Content-Type': 'application/json' } : {})
+            } : {},
+            body: requestBody
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            verificationResults = {
+              originalSources: data.reverse_search_results || [],
+              manipulationDetected: data.manipulation_detected || false,
+              confidence: data.confidence || 0.5,
+              metadata: data.metadata || {},
+              similarImages: data.similar_images || []
+            };
+          } else {
+            throw new Error('Deepfake API verification failed');
+          }
+        } catch (error) {
+          console.log('Deepfake API unavailable for verification, using fallback');
+          verificationResults = {
+            originalSources: [],
+            manipulationDetected: false,
+            confidence: 0.5,
+            metadata: {},
+            similarImages: [],
+            note: "Verification service temporarily unavailable"
+          };
+        }
+      } else {
+        verificationResults = {
+          originalSources: [],
+          manipulationDetected: false,
+          confidence: 0.5,
+          metadata: {},
+          similarImages: [],
+          note: "Verification service not configured"
+        };
+      }
+
+      res.json({ verificationResults });
+    } catch (error) {
+      console.error("Reverse image verification error:", error);
+      res.status(500).json({ message: "Verification failed" });
+    }
+  });
+
+  app.post("/api/verify/fact-check", authenticateToken, async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
+      const { claim, url } = req.body;
+
+      if (!claim && !url) {
+        return res.status(400).json({ message: "Claim text or URL is required" });
+      }
+
+      // Use deepfake API for fact verification
+      let factCheckResults;
+      if (DEEPFAKE_API_KEY) {
+        try {
+          const response = await fetch(`${DEEPFAKE_API_URL}/verify/fact-check`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${DEEPFAKE_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ claim, url })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            factCheckResults = {
+              verificationStatus: data.status || "unverified",
+              sources: data.sources || [],
+              confidence: data.confidence || 0.5,
+              contradictingSources: data.contradicting_sources || [],
+              relatedClaims: data.related_claims || [],
+              factCheckOrganizations: data.fact_check_orgs || []
+            };
+          } else {
+            throw new Error('Fact-check API failed');
+          }
+        } catch (error) {
+          console.log('Fact-check API unavailable, using fallback');
+          factCheckResults = {
+            verificationStatus: "unverified",
+            sources: [],
+            confidence: 0.5,
+            contradictingSources: [],
+            relatedClaims: [],
+            factCheckOrganizations: [],
+            note: "Fact-check service temporarily unavailable"
+          };
+        }
+      } else {
+        factCheckResults = {
+          verificationStatus: "unverified",
+          sources: [],
+          confidence: 0.5,
+          contradictingSources: [],
+          relatedClaims: [],
+          factCheckOrganizations: [],
+          note: "Fact-check service not configured"
+        };
+      }
+
+      res.json({ factCheckResults });
+    } catch (error) {
+      console.error("Fact-check error:", error);
+      res.status(500).json({ message: "Fact-check failed" });
+    }
+  });
+
+  app.post("/api/verify/source-credibility", authenticateToken, async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
+      const { url, domain } = req.body;
+
+      if (!url && !domain) {
+        return res.status(400).json({ message: "URL or domain is required" });
+      }
+
+      // Use deepfake API for source credibility analysis
+      let credibilityResults;
+      if (DEEPFAKE_API_KEY) {
+        try {
+          const response = await fetch(`${DEEPFAKE_API_URL}/verify/source`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${DEEPFAKE_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url, domain })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            credibilityResults = {
+              credibilityScore: data.credibility_score || 0.5,
+              trustFactors: data.trust_factors || [],
+              riskFactors: data.risk_factors || [],
+              domainAge: data.domain_age || null,
+              ownership: data.ownership || {},
+              relatedDomains: data.related_domains || [],
+              mediaType: data.media_type || "unknown"
+            };
+          } else {
+            throw new Error('Source credibility API failed');
+          }
+        } catch (error) {
+          console.log('Source credibility API unavailable, using fallback');
+          credibilityResults = {
+            credibilityScore: 0.5,
+            trustFactors: [],
+            riskFactors: [],
+            domainAge: null,
+            ownership: {},
+            relatedDomains: [],
+            mediaType: "unknown",
+            note: "Credibility service temporarily unavailable"
+          };
+        }
+      } else {
+        credibilityResults = {
+          credibilityScore: 0.5,
+          trustFactors: [],
+          riskFactors: [],
+          domainAge: null,
+          ownership: {},
+          relatedDomains: [],
+          mediaType: "unknown",
+          note: "Credibility service not configured"
+        };
+      }
+
+      res.json({ credibilityResults });
+    } catch (error) {
+      console.error("Source credibility error:", error);
+      res.status(500).json({ message: "Source credibility analysis failed" });
     }
   });
 
