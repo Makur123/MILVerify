@@ -9,7 +9,7 @@ import OpenAI from "openai";
 import "./types"; // Import type extensions
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 // Configure multer for file uploads
 const upload = multer({
@@ -100,6 +100,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Text content is required" });
       }
 
+      if (!openai) {
+        return res.status(503).json({ 
+          message: "AI analysis service not available. Please configure OPENAI_API_KEY." 
+        });
+      }
+
       // Analyze with OpenAI
       const openaiResponse = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -178,6 +184,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (!file) {
         return res.status(400).json({ message: "Image file is required" });
+      }
+
+      if (!openai) {
+        return res.status(503).json({ 
+          message: "AI analysis service not available. Please configure OPENAI_API_KEY." 
+        });
       }
 
       // Convert to base64 for OpenAI Vision API
