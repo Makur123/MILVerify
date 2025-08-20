@@ -49,22 +49,22 @@ export function QuickScanOptions({ user, onAuthRequired }: QuickScanOptionsProps
   };
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       {scanOptions.map((option) => (
         <Card key={option.id} className={`${option.color} hover:shadow-md transition-shadow`}>
-          <CardContent className="p-6 text-center space-y-4">
-            <div className={`w-12 h-12 mx-auto ${option.iconBg} rounded-full flex items-center justify-center`}>
-              <span className="text-2xl">{option.icon}</span>
+          <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 mx-auto ${option.iconBg} rounded-full flex items-center justify-center`}>
+              <span className="text-xl sm:text-2xl">{option.icon}</span>
             </div>
             
-            <div className="space-y-2">
-              <h3 className="font-semibold text-gray-900">{option.title}</h3>
-              <p className="text-sm text-gray-600">{option.description}</p>
+            <div className="space-y-1 sm:space-y-2">
+              <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{option.title}</h3>
+              <p className="text-xs sm:text-sm text-gray-600">{option.description}</p>
             </div>
             
             <Button 
               onClick={() => handleScanClick(option.id)}
-              className="w-full bg-black hover:bg-gray-800 text-white text-sm"
+              className="w-full bg-black hover:bg-gray-800 text-white text-xs sm:text-sm py-2"
               data-testid={`button-${option.id}`}
             >
               {option.id === 'quick-scan' ? 'Start Scan' : 

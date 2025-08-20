@@ -54,35 +54,35 @@ export function LearningPaths({ user, onAuthRequired }: LearningPathsProps) {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-900">Media & Information Literacy Hub</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="text-center space-y-3 sm:space-y-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Media & Information Literacy Hub</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base px-4 sm:px-0">
           Learn essential skills to navigate the digital information landscape and identify AI-generated content.
         </p>
       </div>
 
       {/* Module Categories */}
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <Button variant="outline" className="bg-white border-blue-300 text-blue-700">Learning Paths</Button>
-        <Button variant="outline" className="text-gray-600">Quick Modules</Button>
-        <Button variant="outline" className="text-gray-600">Daily Tips</Button>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <Button variant="outline" className="bg-white border-blue-300 text-blue-700 text-sm">Learning Paths</Button>
+        <Button variant="outline" className="text-gray-600 text-sm">Quick Modules</Button>
+        <Button variant="outline" className="text-gray-600 text-sm">Daily Tips</Button>
       </div>
 
       {/* Learning Paths */}
       <div className="space-y-4">
-        <p className="text-center text-sm text-gray-600 mb-6">💡 Choose your learning path</p>
+        <p className="text-center text-sm text-gray-600 mb-4 sm:mb-6">💡 Choose your learning path</p>
         
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {learningPaths.map((path) => {
             const IconComponent = path.icon;
             
             return (
               <Card key={path.id} className="relative overflow-hidden hover:shadow-lg transition-shadow border-gray-200">
-                <CardContent className="p-6 space-y-4">
+                <CardContent className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   <div className="flex items-start justify-between">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${path.color} rounded-lg flex items-center justify-center`}>
-                      <span className="text-white text-xl font-bold">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${path.color} rounded-lg flex items-center justify-center`}>
+                      <span className="text-white text-lg sm:text-xl font-bold">
                         {path.id === 'mil-fundamentals' ? '📚' : 
                          path.id === 'ai-detection' ? '🎯' : '✅'}
                       </span>
@@ -94,8 +94,8 @@ export function LearningPaths({ user, onAuthRequired }: LearningPathsProps) {
                   </div>
                   
                   <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{path.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{path.description}</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">{path.title}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{path.description}</p>
                   </div>
 
                   {user && path.progress > 0 && (
@@ -110,7 +110,7 @@ export function LearningPaths({ user, onAuthRequired }: LearningPathsProps) {
                   
                   <Button 
                     onClick={() => handleStartLearning(path.id)}
-                    className="w-full bg-black hover:bg-gray-800 text-white"
+                    className="w-full bg-black hover:bg-gray-800 text-white text-sm"
                     data-testid={`button-start-${path.id}`}
                   >
                     {user && path.progress > 0 ? 'Continue Learning' : 'Start Learning'} →
@@ -125,20 +125,20 @@ export function LearningPaths({ user, onAuthRequired }: LearningPathsProps) {
       {/* Unlock Your Potential Section */}
       {!user && (
         <Card className="bg-gray-100 border-gray-200">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
-                <Lock className="h-6 w-6 text-white" />
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-lg flex items-center justify-center">
+                <Lock className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-1">🔓 Unlock Your Full Potential!</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">🔓 Unlock Your Full Potential!</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
                   Sign in to track your progress, unlock advanced modules, and access personalized learning recommendations based on your skill level.
                 </p>
               </div>
               <Button 
                 onClick={onAuthRequired}
-                className="bg-black hover:bg-gray-800 text-white px-6"
+                className="bg-black hover:bg-gray-800 text-white px-4 sm:px-6 w-full sm:w-auto text-sm"
                 data-testid="button-signin-learning"
               >
                 Sign In

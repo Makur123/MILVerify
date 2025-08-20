@@ -37,26 +37,28 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <Header user={user} onShowAuth={handleShowAuth} />
       
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="max-w-5xl mx-auto">
           {/* Hero Section */}
-          <div className="text-center mb-8 space-y-4">
-            <h1 className="text-3xl font-bold text-gray-900">Media & Information Literacy Tool</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+          <div className="text-center mb-6 sm:mb-8 space-y-3 sm:space-y-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Media & Information Literacy Tool</h1>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base px-4 sm:px-0">
               Detect AI-generated content, learn media literacy skills, and verify information with our comprehensive analysis tools.
             </p>
           </div>
 
           {/* Sign-in Banner */}
           {!user && (
-            <Card className="mb-8 bg-gray-100 border-gray-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center space-x-4 text-center">
-                  <Users className="h-5 w-5 text-gray-600" />
-                  <span className="text-gray-700">Sign in to save your progress and access advanced features</span>
+            <Card className="mb-6 sm:mb-8 bg-gray-100 border-gray-200">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 text-center">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-5 w-5 text-gray-600" />
+                    <span className="text-gray-700 text-sm sm:text-base">Sign in to save your progress and access advanced features</span>
+                  </div>
                   <Button 
                     onClick={handleShowAuth}
-                    className="bg-black hover:bg-gray-800 text-white px-6 py-2 text-sm"
+                    className="bg-black hover:bg-gray-800 text-white px-6 py-2 text-sm w-full sm:w-auto"
                     data-testid="button-signin-banner"
                   >
                     Sign In
@@ -68,90 +70,93 @@ export default function Home() {
 
           {/* Navigation Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8 bg-gray-200 p-1 rounded-lg">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-6 sm:mb-8 bg-gray-200 p-1 rounded-lg">
               <TabsTrigger 
                 value="content-analysis" 
-                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600"
+                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 text-xs sm:text-sm"
                 data-testid="tab-content-analysis"
               >
-                Content Analysis
+                <span className="hidden sm:inline">Content Analysis</span>
+                <span className="sm:hidden">Analysis</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="learn-mil" 
-                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600"
+                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 text-xs sm:text-sm"
                 data-testid="tab-learn-mil"
               >
-                Learn MIL
+                <span className="hidden sm:inline">Learn MIL</span>
+                <span className="sm:hidden">Learn</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="results" 
-                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600"
+                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 text-xs sm:text-sm"
                 data-testid="tab-results"
               >
                 Results
               </TabsTrigger>
               <TabsTrigger 
                 value="verification-tools" 
-                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600"
+                className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-gray-600 text-xs sm:text-sm"
                 data-testid="tab-verification-tools"
               >
-                Verification Tools
+                <span className="hidden sm:inline">Verification Tools</span>
+                <span className="sm:hidden">Tools</span>
               </TabsTrigger>
             </TabsList>
 
             {/* Content Analysis Tab */}
-            <TabsContent value="content-analysis" className="space-y-8">
+            <TabsContent value="content-analysis" className="space-y-6 sm:space-y-8">
               {/* Content Analysis Section */}
               <Card className="border-gray-200">
-                <CardContent className="p-6 space-y-6">
-                  <div className="space-y-4">
+                <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+                  <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center space-x-2">
                       <Shield className="h-5 w-5 text-gray-600" />
                       <h2 className="text-lg font-semibold text-gray-900">Content Analysis</h2>
                     </div>
                     <p className="text-sm text-gray-600">
                       Upload or paste content to analyze for AI generation, deepfakes, and authenticity markers.
-                      <br />
-                      Sign in for advanced analysis features and history tracking.
+                      <br className="hidden sm:block" />
+                      <span className="sm:hidden"> </span>Sign in for advanced analysis features and history tracking.
                     </p>
                   </div>
 
                   {/* Content Type Selector */}
-                  <div className="grid grid-cols-4 gap-4 p-1 bg-gray-100 rounded-lg">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 p-1 bg-gray-100 rounded-lg">
                     <Button
                       variant={contentType === 'text' ? 'default' : 'ghost'}
                       onClick={() => setContentType('text')}
-                      className={`flex items-center justify-center space-x-2 ${contentType === 'text' ? 'bg-white shadow-sm' : ''}`}
+                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm ${contentType === 'text' ? 'bg-white shadow-sm' : ''}`}
                       data-testid="button-content-text"
                     >
-                      <FileText className="h-4 w-4" />
+                      <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span>Text</span>
                     </Button>
                     <Button
                       variant={contentType === 'image' ? 'default' : 'ghost'}
                       onClick={() => setContentType('image')}
-                      className={`flex items-center justify-center space-x-2 ${contentType === 'image' ? 'bg-white shadow-sm' : ''}`}
+                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm ${contentType === 'image' ? 'bg-white shadow-sm' : ''}`}
                       data-testid="button-content-image"
                     >
-                      <Image className="h-4 w-4" />
+                      <Image className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span>Image</span>
                     </Button>
                     <Button
                       variant={contentType === 'video' ? 'default' : 'ghost'}
                       onClick={() => setContentType('video')}
-                      className={`flex items-center justify-center space-x-2 ${contentType === 'video' ? 'bg-white shadow-sm' : ''}`}
+                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm ${contentType === 'video' ? 'bg-white shadow-sm' : ''}`}
                       data-testid="button-content-video"
                     >
-                      <Video className="h-4 w-4" />
+                      <Video className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span>Video</span>
                     </Button>
                     <Button
                       variant={contentType === 'url' ? 'default' : 'ghost'}
                       onClick={() => setContentType('url')}
-                      className={`flex items-center justify-center space-x-2 ${contentType === 'url' ? 'bg-white shadow-sm' : ''}`}
+                      className={`flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm ${contentType === 'url' ? 'bg-white shadow-sm' : ''}`}
                       data-testid="button-content-url"
                     >
-                      <Link className="h-4 w-4" />
+                      <Link className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span>URL</span>
                     </Button>
                   </div>
@@ -163,13 +168,13 @@ export default function Home() {
                         placeholder="Paste text content here to analyze for AI generation patterns, bias, and authenticity..."
                         value={textContent}
                         onChange={(e) => setTextContent(e.target.value)}
-                        className="min-h-40 bg-gray-50 border-gray-200"
+                        className="min-h-32 sm:min-h-40 bg-gray-50 border-gray-200 text-sm"
                         data-testid="input-text-content"
                       />
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
                         <span className="text-xs text-gray-500">{textContent.length} characters</span>
                         <Button 
-                          className="bg-gray-600 hover:bg-gray-700 text-white px-6"
+                          className="bg-gray-600 hover:bg-gray-700 text-white px-4 sm:px-6 w-full sm:w-auto"
                           data-testid="button-analyze-text"
                         >
                           Analyze Text
@@ -186,8 +191,8 @@ export default function Home() {
               {/* Enhanced Features */}
               {!user && (
                 <Card className="bg-yellow-50 border-yellow-200">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-3">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-3">
                       <div className="bg-yellow-100 p-2 rounded-lg">
                         <Shield className="h-5 w-5 text-yellow-600" />
                       </div>
@@ -198,7 +203,7 @@ export default function Home() {
                         </p>
                         <Button 
                           onClick={handleShowAuth}
-                          className="bg-black hover:bg-gray-800 text-white text-sm px-4 py-2"
+                          className="bg-black hover:bg-gray-800 text-white text-sm px-4 py-2 w-full sm:w-auto"
                           data-testid="button-enhanced-features"
                         >
                           Sign In
