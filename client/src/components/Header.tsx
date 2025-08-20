@@ -1,7 +1,6 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { authService, type User as UserType } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
 
 interface HeaderProps {
   user: UserType | null;
@@ -16,21 +15,24 @@ export function Header({ user, onShowAuth }: HeaderProps) {
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo Section */}
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-              <Sparkles className="text-white h-5 w-5" />
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">G</span>
             </div>
-            <span className="text-xl font-semibold text-gray-900">logo</span>
+            <div>
+              <h1 className="text-lg font-semibold text-gray-900">MIL Guard</h1>
+              <p className="text-xs text-gray-500">AI Detection & Media Literacy</p>
+            </div>
           </div>
           
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Real-time Analysis</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Educational Content</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Community Verified</a>
+            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">🚀 Real-time Analysis</a>
+            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">📚 Educational Content</a>
+            <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">✅ Community Verified</a>
             <a href="#" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Browser Extension</a>
           </nav>
           
@@ -45,7 +47,7 @@ export function Header({ user, onShowAuth }: HeaderProps) {
           ) : (
             <Button 
               onClick={onShowAuth}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2"
+              className="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-md text-sm font-medium"
               data-testid="button-signin"
             >
               Sign In

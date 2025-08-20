@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap, Search, Users, Brain, Eye, Target } from 'lucide-react';
+import { Zap, Search, Users, AlertTriangle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { type User } from '@/lib/auth';
@@ -14,23 +14,29 @@ export function QuickScanOptions({ user, onAuthRequired }: QuickScanOptionsProps
     {
       id: 'quick-scan',
       title: 'Quick Scan',
-      description: 'Perform a rapid check for basic credibility signals and immediate red flags.',
-      icon: Zap,
-      action: 'Start Scan'
+      description: 'Basic authenticity check',
+      icon: '⚡',
+      color: 'bg-blue-50 border-blue-200',
+      iconBg: 'bg-blue-100',
+      iconColor: 'text-blue-600'
     },
     {
       id: 'deep-analysis',
       title: 'Deep Analysis',
-      description: 'Conduct a thorough, multi-faceted analysis covering source, bias, and factual accuracy.',
-      icon: Brain,
-      action: 'Begin Deep Scan'
+      description: 'Comprehensive AI detection',
+      icon: '⚠️',
+      color: 'bg-orange-50 border-orange-200',
+      iconBg: 'bg-orange-100',
+      iconColor: 'text-orange-600'
     },
     {
       id: 'expert-review',
       title: 'Expert Review',
-      description: 'Submit content for review by MIL Guard\'s expert community or certified analysts.',
-      icon: Users,
-      action: 'Request Review'
+      description: 'Human verification',
+      icon: '👥',
+      color: 'bg-purple-50 border-purple-200',
+      iconBg: 'bg-purple-100',
+      iconColor: 'text-purple-600'
     }
   ];
 
@@ -39,61 +45,34 @@ export function QuickScanOptions({ user, onAuthRequired }: QuickScanOptionsProps
       onAuthRequired();
       return;
     }
-    // Handle scan functionality
     console.log(`Starting ${scanId} scan`);
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-center text-gray-900">Quick Scan Options</h2>
-      
-      <div className="grid md:grid-cols-3 gap-6">
-        {scanOptions.map((option) => {
-          const IconComponent = option.icon;
-          
-          return (
-            <Card key={option.id} className="relative overflow-hidden hover:shadow-lg transition-shadow">
-              <CardContent className="p-6 text-center space-y-4">
-                <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                  <IconComponent className="h-8 w-8 text-gray-600" />
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{option.title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{option.description}</p>
-                </div>
-                
-                <Button 
-                  onClick={() => handleScanClick(option.id)}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-                  data-testid={`button-${option.id}`}
-                >
-                  {option.action}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {!user && (
-        <Card className="bg-blue-50 border-blue-200">
-          <CardContent className="p-4 text-center">
-            <div className="flex items-center justify-center space-x-2 text-blue-800">
-              <Eye className="h-5 w-5" />
-              <span className="text-sm">Sign in to save your analysis reports and track your media literacy progress.</span>
+    <div className="grid md:grid-cols-3 gap-6">
+      {scanOptions.map((option) => (
+        <Card key={option.id} className={`${option.color} hover:shadow-md transition-shadow`}>
+          <CardContent className="p-6 text-center space-y-4">
+            <div className={`w-12 h-12 mx-auto ${option.iconBg} rounded-full flex items-center justify-center`}>
+              <span className="text-2xl">{option.icon}</span>
             </div>
+            
+            <div className="space-y-2">
+              <h3 className="font-semibold text-gray-900">{option.title}</h3>
+              <p className="text-sm text-gray-600">{option.description}</p>
+            </div>
+            
             <Button 
-              onClick={onAuthRequired}
-              variant="link" 
-              className="text-blue-600 hover:text-blue-800 mt-2"
-              data-testid="button-learn-more"
+              onClick={() => handleScanClick(option.id)}
+              className="w-full bg-black hover:bg-gray-800 text-white text-sm"
+              data-testid={`button-${option.id}`}
             >
-              Learn More
+              {option.id === 'quick-scan' ? 'Start Scan' : 
+               option.id === 'deep-analysis' ? 'Begin Deep Scan' : 'Request Review'}
             </Button>
           </CardContent>
         </Card>
-      )}
+      ))}
     </div>
   );
 }

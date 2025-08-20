@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Network, Shield, Users, Eye, ExternalLink } from 'lucide-react';
+import { Search, Network, Shield, Users, Eye, ExternalLink, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,87 +66,124 @@ export function VerificationTools({ user, onAuthRequired }: VerificationToolsPro
 
   return (
     <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold text-gray-900">Verification Tools</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Comprehensive tools for verifying content authenticity and source credibility
+        </p>
+      </div>
+
       {/* Quick Verification Section */}
-      <Card>
-        <CardContent className="p-6 text-center space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">Quick Verification</h2>
-          <p className="text-gray-600">Enter text, image URL, or video link to perform a quick verification.</p>
+      <Card className="border-gray-200">
+        <CardContent className="p-6 space-y-4">
+          <h3 className="font-semibold text-gray-900">Quick Verification</h3>
+          <p className="text-sm text-gray-600">Paste a URL, claim, or upload content for instant verification</p>
           
-          <div className="max-w-2xl mx-auto space-y-4">
+          <div className="flex space-x-2">
             <Input
-              placeholder="Paste link or text here..."
+              placeholder="Enter URL, text or upload file for quick verification..."
               value={quickVerifyText}
               onChange={(e) => setQuickVerifyText(e.target.value)}
-              className="text-center"
+              className="flex-1 bg-gray-50"
               data-testid="input-quick-verify"
             />
             <Button 
               onClick={handleQuickVerify}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-8"
+              className="bg-black hover:bg-gray-800 text-white px-6"
               data-testid="button-verify"
             >
-              Verify
+              🔍 Verify
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Tools Section */}
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-center text-gray-900">Explore Our Tools</h2>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {verificationTools.map((tool) => {
-            const IconComponent = tool.icon;
-            
-            return (
-              <Card key={tool.id} className="relative overflow-hidden hover:shadow-lg transition-shadow">
-                <CardContent className="p-6 text-center space-y-4">
-                  <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                    <IconComponent className="h-8 w-8 text-gray-600" />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{tool.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{tool.description}</p>
-                  </div>
-                  
-                  <Button 
-                    onClick={() => handleToolClick(tool.id)}
-                    variant="outline"
-                    className="w-full"
-                    data-testid={`button-${tool.id}`}
-                  >
-                    {tool.action}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
-
-      {!user && (
-        <Card className="bg-purple-50 border-purple-200">
-          <CardContent className="p-6 text-center">
-            <div className="space-y-4">
-              <div className="w-12 h-12 mx-auto bg-purple-600 rounded-full flex items-center justify-center">
-                <Eye className="h-6 w-6 text-white" />
+      {/* Tools Grid */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="border-gray-200 hover:shadow-md transition-shadow">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Search className="h-5 w-5 text-blue-600" />
               </div>
-              <p className="text-purple-800 font-medium">
-                Unlock the full potential of these tools by signing in and gaining access to advanced features.
-              </p>
-              <Button 
-                onClick={onAuthRequired}
-                className="bg-purple-600 hover:bg-purple-700 text-white"
-                data-testid="button-unlock-tools"
-              >
-                Sign In to Unlock
-              </Button>
+              <div>
+                <h3 className="font-semibold text-gray-900">Reverse Image Search</h3>
+                <p className="text-sm text-gray-600">Find the original source of images and detect manipulations</p>
+              </div>
             </div>
+            <Button 
+              onClick={() => handleToolClick('reverse-image-search')}
+              className="w-full bg-black hover:bg-gray-800 text-white"
+              data-testid="button-reverse-image-search"
+            >
+              Search Images 🔗
+            </Button>
           </CardContent>
         </Card>
-      )}
+
+        <Card className="border-gray-200 hover:shadow-md transition-shadow">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Fact-Check Network</h3>
+                <p className="text-sm text-gray-600">Cross-reference claims with verified fact-checking databases</p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => handleToolClick('fact-check-network')}
+              className="w-full bg-black hover:bg-gray-800 text-white"
+              data-testid="button-fact-check-network"
+            >
+              Check Facts 🔗
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-200 hover:shadow-md transition-shadow">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Shield className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Source Credibility</h3>
+                <p className="text-sm text-gray-600">Evaluate the trustworthiness of news sources, websites, and authors.</p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => handleToolClick('source-credibility')}
+              className="w-full bg-black hover:bg-gray-800 text-white"
+              data-testid="button-source-credibility"
+            >
+              Analyze Source
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="border-gray-200 hover:shadow-md transition-shadow">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Users className="h-5 w-5 text-orange-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Community Verification</h3>
+                <p className="text-sm text-gray-600">Leverage community insights and collective intelligence for verification.</p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => handleToolClick('community-verification')}
+              className="w-full bg-black hover:bg-gray-800 text-white"
+              data-testid="button-community-verification"
+            >
+              Join Community
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
