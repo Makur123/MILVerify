@@ -2,6 +2,16 @@
 
 MIL Guard is a Media & Information Literacy application that helps users detect AI-generated content and develop critical thinking skills through interactive education. The application provides a comprehensive suite of tools for analyzing text, images, and audio content for AI generation indicators, combined with structured learning modules and verification tools for developing media literacy skills.
 
+## Recent Changes (Latest)
+
+**UNESCO MIL Framework & Deepfake Detection Integration** - August 2025
+- Integrated UNESCO Media & Information Literacy Framework with structured learning modules
+- Added deepfake detection API for enhanced content verification
+- Enhanced verification tools with fact-checking and source credibility analysis
+- Implemented file upload functionality for image verification
+- Added comprehensive verification results display with multiple detection services
+- Updated learning paths with progress tracking and achievement badges
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
