@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Shield, ExternalLink, MapPin, Clock, Satellite, Globe, CheckCircle, Star } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Search, Network, Shield, Users, Eye, ExternalLink } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { FileUpload } from './FileUpload';
-import { useToast } from '@/hooks/use-toast';
-import type { User } from '@/lib/auth';
+import { type User } from '@/lib/auth';
 
 interface VerificationToolsProps {
   user: User | null;
@@ -15,239 +11,142 @@ interface VerificationToolsProps {
 }
 
 export function VerificationTools({ user, onAuthRequired }: VerificationToolsProps) {
-  const [sourceUrl, setSourceUrl] = useState('');
-  const [credibilityResult, setCredibilityResult] = useState<any>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const { toast } = useToast();
+  const [quickVerifyText, setQuickVerifyText] = useState('');
 
-  const handleReverseImageSearch = (file: File) => {
+  const verificationTools = [
+    {
+      id: 'reverse-image-search',
+      title: 'Reverse Image Search',
+      description: 'Verify the origin and context of images by searching across the web.',
+      icon: Search,
+      action: 'Search Image'
+    },
+    {
+      id: 'fact-check-network',
+      title: 'Fact-Check Network',
+      description: 'Access a wide network of trusted fact-checking organizations and databases.',
+      icon: Network,
+      action: 'Explore Network'
+    },
+    {
+      id: 'source-credibility',
+      title: 'Source Credibility',
+      description: 'Evaluate the trustworthiness of news sources, websites, and authors.',
+      icon: Shield,
+      action: 'Analyze Source'
+    },
+    {
+      id: 'community-verification',
+      title: 'Community Verification',
+      description: 'Leverage community insights and collective intelligence for verification.',
+      icon: Users,
+      action: 'Join Community'
+    }
+  ];
+
+  const handleToolClick = (toolId: string) => {
     if (!user) {
       onAuthRequired();
       return;
     }
-
-    // Simulate reverse image search
-    toast({
-      title: "Reverse Image Search",
-      description: "Image search initiated across multiple platforms",
-    });
+    // Handle tool functionality
+    console.log(`Opening ${toolId} tool`);
   };
 
-  const analyzeSourceCredibility = async () => {
-    if (!sourceUrl.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter a URL to analyze",
-      });
+  const handleQuickVerify = () => {
+    if (!quickVerifyText.trim()) return;
+    
+    if (!user) {
+      onAuthRequired();
       return;
     }
-
-    setIsAnalyzing(true);
     
-    // Simulate credibility analysis
-    setTimeout(() => {
-      const mockResult = {
-        credibilityScore: 4,
-        domain: new URL(sourceUrl).hostname,
-        factors: [
-          "Established news organization",
-          "Transparent editorial policies", 
-          "Multiple author verification",
-          "Regular fact-checking"
-        ],
-        warnings: [],
-        recommendation: "High credibility source"
-      };
-      
-      setCredibilityResult(mockResult);
-      setIsAnalyzing(false);
-      
-      toast({
-        title: "Analysis Complete",
-        description: "Source credibility has been assessed",
-      });
-    }, 2000);
+    console.log('Quick verification:', quickVerifyText);
   };
 
-  const factCheckResources = [
-    { name: "Snopes", url: "https://snopes.com", icon: CheckCircle },
-    { name: "FactCheck.org", url: "https://factcheck.org", icon: CheckCircle },
-    { name: "PolitiFact", url: "https://politifact.com", icon: CheckCircle },
-    { name: "AP Fact Check", url: "https://apnews.com/hub/ap-fact-check", icon: CheckCircle },
-  ];
-
-  const osintTools = [
-    { name: "Geolocation Verification", icon: MapPin, description: "Verify location claims" },
-    { name: "Timestamp Analysis", icon: Clock, description: "Check content timing" },
-    { name: "Satellite Imagery", icon: Satellite, description: "Access historical imagery" },
-    { name: "Wayback Machine", icon: Globe, description: "View historical versions" },
-  ];
-
   return (
-    <div className="grid lg:grid-cols-2 gap-8">
-      {/* Reverse Image Search */}
+    <div className="space-y-8">
+      {/* Quick Verification Section */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Search className="text-primary mr-2 h-5 w-5" />
-            Reverse Image Search
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <FileUpload
-            type="image"
-            accept="image/*"
-            onFileSelect={handleReverseImageSearch}
-            className="mb-4"
-          />
+        <CardContent className="p-6 text-center space-y-4">
+          <h2 className="text-2xl font-bold text-gray-900">Quick Verification</h2>
+          <p className="text-gray-600">Enter text, image URL, or video link to perform a quick verification.</p>
           
-          <div className="space-y-3">
-            <h4 className="font-medium text-gray-900">Search across:</h4>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">Google Images</Badge>
-              <Badge variant="secondary">TinEye</Badge>
-              <Badge variant="secondary">Yandex</Badge>
-              <Badge variant="secondary">Bing</Badge>
-            </div>
+          <div className="max-w-2xl mx-auto space-y-4">
+            <Input
+              placeholder="Paste link or text here..."
+              value={quickVerifyText}
+              onChange={(e) => setQuickVerifyText(e.target.value)}
+              className="text-center"
+              data-testid="input-quick-verify"
+            />
+            <Button 
+              onClick={handleQuickVerify}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-8"
+              data-testid="button-verify"
+            >
+              Verify
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Fact Checking Resources */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <CheckCircle className="text-secondary mr-2 h-5 w-5" />
-            Fact Checking Resources
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {factCheckResources.map((resource) => (
-              <a
-                key={resource.name}
-                href={resource.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-center space-x-3">
-                  <ExternalLink className="text-primary h-4 w-4" />
-                  <span className="font-medium">{resource.name}</span>
-                </div>
-                <ExternalLink className="text-gray-400 h-4 w-4" />
-              </a>
-            ))}
-          </div>
-
-          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h4 className="font-medium text-yellow-900 mb-2">Quick Verification Checklist</h4>
-            <ul className="text-sm text-yellow-800 space-y-1">
-              <li>✓ Check multiple independent sources</li>
-              <li>✓ Verify the publication date</li>
-              <li>✓ Look for original source attribution</li>
-              <li>✓ Consider the context and motivation</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Source Credibility Checker */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Shield className="text-primary mr-2 h-5 w-5" />
-            Source Credibility Analysis
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="sourceUrl">Enter URL or domain</Label>
-              <div className="flex space-x-2 mt-2">
-                <Input
-                  id="sourceUrl"
-                  type="url"
-                  value={sourceUrl}
-                  onChange={(e) => setSourceUrl(e.target.value)}
-                  placeholder="https://example.com"
-                />
-                <Button onClick={analyzeSourceCredibility} disabled={isAnalyzing}>
-                  {isAnalyzing ? 'Checking...' : 'Check'}
-                </Button>
-              </div>
-            </div>
+      {/* Tools Section */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-center text-gray-900">Explore Our Tools</h2>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {verificationTools.map((tool) => {
+            const IconComponent = tool.icon;
             
-            {/* Analysis Result */}
-            {credibilityResult && (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-green-900">{credibilityResult.recommendation}</span>
-                  <div className="flex space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`h-4 w-4 ${
-                          i < credibilityResult.credibilityScore ? 'text-green-600 fill-current' : 'text-gray-300'
-                        }`} 
-                      />
-                    ))}
+            return (
+              <Card key={tool.id} className="relative overflow-hidden hover:shadow-lg transition-shadow">
+                <CardContent className="p-6 text-center space-y-4">
+                  <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                    <IconComponent className="h-8 w-8 text-gray-600" />
                   </div>
-                </div>
-                <div className="text-sm text-green-800">
-                  <p className="font-medium mb-2">Domain: {credibilityResult.domain}</p>
-                  <ul className="space-y-1">
-                    {credibilityResult.factors.map((factor: string, index: number) => (
-                      <li key={index}>✓ {factor}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold text-gray-900">{tool.title}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{tool.description}</p>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => handleToolClick(tool.id)}
+                    variant="outline"
+                    className="w-full"
+                    data-testid={`button-${tool.id}`}
+                  >
+                    {tool.action}
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
 
-      {/* OSINT Tools */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Satellite className="text-primary mr-2 h-5 w-5" />
-            OSINT Investigation Tools
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {osintTools.map((tool) => (
-              <Button
-                key={tool.name}
-                variant="outline"
-                className="w-full justify-between h-auto p-4"
-                onClick={() => {
-                  if (!user) {
-                    onAuthRequired();
-                    return;
-                  }
-                  toast({
-                    title: tool.name,
-                    description: `Opening ${tool.name} tool...`,
-                  });
-                }}
+      {!user && (
+        <Card className="bg-purple-50 border-purple-200">
+          <CardContent className="p-6 text-center">
+            <div className="space-y-4">
+              <div className="w-12 h-12 mx-auto bg-purple-600 rounded-full flex items-center justify-center">
+                <Eye className="h-6 w-6 text-white" />
+              </div>
+              <p className="text-purple-800 font-medium">
+                Unlock the full potential of these tools by signing in and gaining access to advanced features.
+              </p>
+              <Button 
+                onClick={onAuthRequired}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+                data-testid="button-unlock-tools"
               >
-                <div className="flex items-center space-x-3">
-                  <tool.icon className="text-primary h-5 w-5" />
-                  <div className="text-left">
-                    <div className="font-medium">{tool.name}</div>
-                    <div className="text-sm text-gray-500">{tool.description}</div>
-                  </div>
-                </div>
-                <ExternalLink className="text-gray-400 h-4 w-4" />
+                Sign In to Unlock
               </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
